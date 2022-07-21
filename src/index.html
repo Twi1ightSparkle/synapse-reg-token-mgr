@@ -7,6 +7,7 @@
         <title>Reg Token Mgr</title>
         <link href="./bootstrap.min.css" rel="stylesheet" />
         <link href="./style.css" rel="stylesheet" />
+        <link href="./fontawesome/css/all.css" rel="stylesheet" />
     </head>
 
     <body class="d-flex flex-column h-100">
@@ -32,12 +33,13 @@
                             <a class="nav-link" href="about.html">About</a>
                         </li>
                     </ul>
-                    <form class="d-flex" role="search">
+                    <form class="d-flex" id="loginForm">
                         <input
                             class="form-control me-2"
                             type="text"
                             placeholder="Server domain"
                             aria-label="serverDomain"
+                            id="serverDomain"
                             required
                         />
                         <input
@@ -45,9 +47,10 @@
                             type="password"
                             placeholder="Access token"
                             aria-label="accessToken"
+                            id="accessToken"
                             required
                         />
-                        <button class="btn btn-outline-success" type="submit">Login</button>
+                        <button class="btn btn-outline-success" type="submit" id="loginBtn">Login</button>
                     </form>
                 </div>
             </div>
@@ -59,8 +62,45 @@
                 </div>
             </div>
 
+            <form id="editForm">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="token" minlength="1" maxlength="64" />
+                            <label for="token">Registration token</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="uses_allowed" min="1" />
+                            <label for="uses_allowed">Uses allowed</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="expiry_time" min="1" />
+                            <label for="expiry_time">Expiration time</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="length" min="1" max="64" />
+                            <label for="length">Token length</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
             <div class="row">
-                <div class="col" id="loginResult">placeholder text</div>
+                <div class="col">
+                    <div id="tokenTableDiv"></div>
+                </div>
             </div>
         </div>
 
