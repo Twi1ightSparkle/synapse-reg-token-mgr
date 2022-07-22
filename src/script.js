@@ -77,6 +77,12 @@ function fromUnixTime(timestamp) {
  * Reset the token input form
  */
 function clearForm() {
+    // Get tomorrows date in format yyyy-mm-dd
+    const today = new Date();
+    let tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow = tomorrow.toISOString().split('T')[0];
+
     tokenInput.disabled = false;
     tokenInput.value = '';
 
@@ -84,6 +90,7 @@ function clearForm() {
     usesAllowedInput.value = '';
 
     expiryTimeInput.disabled = false;
+    expiryTimeInput.min = tomorrow;
     expiryTimeInput.value = '';
 
     lengthInput.disabled = false;
@@ -142,11 +149,11 @@ async function getTokens() {
             headers,
         });
 
-        if (res.status !== 200) {
-            return alert(`Unable get list access tokens`);
-        }
-
         result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable get list access tokens. ${result.error}`);
+        }
     } catch (err) {
         return alert(`Unable get list access tokens: ${err}`);
     }
@@ -181,11 +188,11 @@ async function editToken(token) {
             headers,
         });
 
-        if (res.status !== 200) {
-            return alert('Unable fetch token');
-        }
-
         result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable fetch token. ${result.error}`);
+        }
     } catch (err) {
         return alert('Unable fetch token');
     }
@@ -211,7 +218,7 @@ async function editToken(token) {
 tokenInput.addEventListener('focusout', (event) => {
     console.log('sdggfsd');
     const token = tokenInput.value;
-    if (!/[A-Za-z0-9\._~-]+/.test(token) && token.length > 0) {
+    if (!/^[A-Za-z0-9\._~-]+$/.test(token) && token.length > 0) {
         tokenInput.classList.add('is-invalid');
         allowedCharacters.hidden = false;
     } else {
@@ -238,8 +245,10 @@ async function deleteToken(token) {
             headers,
         });
 
+        const result = await res.json();
+
         if (res.status !== 200) {
-            return alert('Unable delete token');
+            return alert(`Unable delete token. ${result.error}`);
         }
     } catch (err) {
         return alert('Unable delete token');
@@ -289,11 +298,11 @@ editForm.addEventListener('submit', async (e) => {
             body: JSON.stringify(body),
         });
 
-        if (res.status !== 200) {
-            return alert('Unable create token');
-        }
-
         result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable create token. ${result.error}`);
+        }
     } catch (err) {
         return alert('Unable create token');
     }
