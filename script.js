@@ -310,7 +310,7 @@ editForm.addEventListener('submit', async (e) => {
  * If an access token and domain is stored, populate the login form and change the login button
  */
 window.onload = function () {
-    if (isLoggedIn) {
+    if (isLoggedIn()) {
         document.querySelector('#accessToken').value = localStorage.getItem('accessToken');
         document.querySelector('#serverDomain').value = localStorage.getItem('serverDomain');
         changeLoginBtn(false);
