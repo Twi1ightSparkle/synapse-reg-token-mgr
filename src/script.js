@@ -8,6 +8,7 @@ const tokenInput = document.querySelector('#token');
 const usesAllowedInput = document.querySelector('#uses_allowed');
 const expiryTimeInput = document.querySelector('#expiry_time');
 const lengthInput = document.querySelector('#length');
+const saveTokenBtn = document.querySelector('#saveToken');
 
 const tokenTableDiv = document.querySelector('#tokenTableDiv');
 
@@ -36,6 +37,15 @@ function changeLoginBtn(login) {
 }
 
 /**
+ * Get the unix time stamp in two weeks form now
+ * @returns {Number} Unix time stamp
+ */
+function inTwoWeeks() {
+    let inTwoWeeks = new Date().getTime();
+    inTwoWeeks += 14 * 24 * 60 * 60 * 1000 - 1;
+    return inTwoWeeks;
+}
+/**
  * Fetch credentials from localStorage
  * @returns {Object} Object containing accessToken, serverDomain, and headers (for fetch)
  */
@@ -52,17 +62,70 @@ function getCredentials() {
 }
 
 /**
+ * Convert a unix time stamp into human readable date
+ * @param {Number} timestamp UNIX time stamp in milliseconds since epoch
+ * @returns {String}         String formatted in format Jan 18, 2022
+ */
+function fromUnixTime(timestamp) {
+    return new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+    }).format(timestamp);
+}
+
+/**
  * Reset the token input form
  */
 function clearForm() {
     tokenInput.disabled = false;
     tokenInput.value = '';
+
     usesAllowedInput.disabled = false;
     usesAllowedInput.value = '';
+
     expiryTimeInput.disabled = false;
     expiryTimeInput.value = '';
+
     lengthInput.disabled = false;
     lengthInput.value = '';
+
+    saveTokenBtn.textContent = 'Create';
+}
+
+/**
+ * Create a table row for an registration token and appends it to the existing table
+ * @param {Object} token                On object with information about the token
+ * @param {String} token.token          The token
+ * @param {Number} token.uses_allowed   Uses allowed
+ * @param {Number} token.pending        Pending used
+ * @param {Number} token.completed      Successful registrations
+ * @param {Number} token.expiry_time    Token Expiration time as UNIX time stamp
+ */
+function createTr(token) {
+    const tokenTable = document.querySelector('#tokenTable');
+    const tr = document.createElement('tr');
+
+    // Give the row an ID so it can be easily removed without redrawing the whole table
+    // const b64 = btoa(token);
+    tr.id = `token-${token.token}`;
+
+    tr.innerHTML = `<td>
+        <code>${token.token.length > 16 ? `${token.token.slice(0, 16)}...` : token.token}<code></td>
+        <td>${token.uses_allowed}</td>
+        <td>${token.pending}</td>
+        <td>${token.completed}</td>
+        <td>${token.expiry_time ? fromUnixTime(token.expiry_time) : 'Never'}</td>
+        <td class="text-center">
+            <span onclick="editToken('${token.token}')" style="cursor:pointer">
+                <i class="fa-solid fa-pencil"></i>
+            </span>
+        </td>
+        <td class="text-center">
+            <span onclick="deleteToken('${token.token}')" style="cursor:pointer">
+                <i class="fa-solid fa-trash-can"></i>
+            </span>
+    </td>`;
+    tokenTable.appendChild(tr);
 }
 
 /**
@@ -101,27 +164,7 @@ async function getTokens() {
         </tr>
     </table>`;
 
-    result.registration_tokens.forEach((token) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<tr>
-            <td><code>${token.token.length > 10 ? `${token.token.slice(0, 10)}...` : token.token}<code></td>
-            <td>${token.uses_allowed}</td>
-            <td>${token.pending}</td>
-            <td>${token.completed}</td>
-            <td>${token.expiry_time ?? 'Never'}</td>
-            <td>
-                <span onclick="editToken('${token.token}')" style="cursor:pointer">
-                    <i class="fa-solid fa-pencil"></i>
-                </span>
-            </td>
-            <td>
-                <span onclick="deleteToken('${token.token}')" style="cursor:pointer">
-                    <i class="fa-solid fa-trash-can"></i>
-                </span>
-            </td>
-        </tr>`;
-        tokenTable.appendChild(tr);
-    });
+    result.registration_tokens.forEach((token) => createTr(token));
 }
 
 /**
@@ -148,11 +191,35 @@ async function editToken(token) {
     }
 
     usesAllowedInput.value = result.uses_allowed;
-    expiryTimeInput.value = result.uses_allowed;
+    usesAllowedInput.min = result.pending + result.completed || 1;
+
+    expiryTimeInput.valueAsNumber = result.expiry_time || '';
+
+    lengthInput.value = result.token.length;
+    lengthInput.disabled = true;
 
     tokenInput.disabled = true;
     tokenInput.value = result.token;
+
+    saveTokenBtn.textContent = 'Update';
 }
+
+/**
+ * Validate the token and add a red ring around the input if invalid.
+ * Also disables the token length input if a token is specified
+ */
+tokenInput.addEventListener('focusout', (event) => {
+    console.log('sdggfsd');
+    const token = tokenInput.value;
+    if (!/[A-Za-z0-9\._~-]+/.test(token) && token.length > 0) {
+        tokenInput.classList.add('is-invalid');
+        allowedCharacters.hidden = false;
+    } else {
+        tokenInput.classList.remove('is-invalid');
+    }
+
+    lengthInput.disabled = token.length > 0 ? true : false;
+});
 
 /**
  * Deletes a registration token
@@ -178,8 +245,66 @@ async function deleteToken(token) {
         return alert('Unable delete token');
     }
 
-    getTokens();
+    document.getElementById(`token-${token}`).remove();
 }
+
+/**
+ * Runs when the token form is submitted
+ */
+editForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const editing = tokenInput.disabled;
+
+    // This ensures the token is valid through the selected day
+    const almostOneDay = 60 * 60 * 24 - 1;
+
+    const body = {
+        expiry_time: expiryTimeInput.valueAsNumber + almostOneDay || inTwoWeeks(),
+        uses_allowed: Number(usesAllowedInput.value) || 10,
+    };
+
+    if (tokenInput.value) {
+        body.token = tokenInput.value;
+    } else {
+        body.length = Number(lengthInput.value) || 16;
+    }
+
+    const { serverDomain, headers } = getCredentials();
+    headers.append('Content-Type', 'application/json');
+
+    let path = '/_synapse/admin/v1/registration_tokens/new';
+    let method = 'POST';
+
+    if (tokenInput.disabled) {
+        path = `/_synapse/admin/v1/registration_tokens/${tokenInput.value}`;
+        method = 'PUT';
+    }
+
+    let result;
+    try {
+        const res = await fetch(`https://${serverDomain}${path}`, {
+            method,
+            headers,
+            body: JSON.stringify(body),
+        });
+
+        if (res.status !== 200) {
+            return alert('Unable create token');
+        }
+
+        result = await res.json();
+    } catch (err) {
+        return alert('Unable create token');
+    }
+
+    if (editing) {
+        document.getElementById(`token-${tokenInput.value}`).remove();
+    }
+
+    createTr(result);
+    clearForm();
+});
 
 /**
  * If an access token and domain is stored, populate the login form and change the login button
@@ -191,6 +316,7 @@ window.onload = function () {
         changeLoginBtn(false);
         getTokens();
     }
+    clearForm();
 };
 
 /**
@@ -205,6 +331,8 @@ loginForm.addEventListener('submit', async (e) => {
             accessTokenInput.value = '';
             serverDomainInput.value = '';
             changeLoginBtn(true);
+            clearForm();
+            tokenTableDiv.innerHTML = '';
         }
         return;
     }
@@ -272,4 +400,5 @@ loginForm.addEventListener('submit', async (e) => {
     localStorage.setItem('serverDomain', serverDomain);
     localStorage.setItem('accessToken', accessToken);
     changeLoginBtn(false);
+    getTokens();
 });

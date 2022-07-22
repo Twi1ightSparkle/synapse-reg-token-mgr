@@ -5,9 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Reg Token Mgr</title>
-        <link href="./bootstrap.min.css" rel="stylesheet" />
+        <link href="./bootstrap/bootstrap.min.css" rel="stylesheet" />
         <link href="./style.css" rel="stylesheet" />
-        <link href="./fontawesome/css/all.css" rel="stylesheet" />
+        <link href="./fontawesome/css/fontawesome.min.css" rel="stylesheet" />
+        <link href="./fontawesome/css/solid.min.css" rel="stylesheet" />
     </head>
 
     <body class="d-flex flex-column h-100">
@@ -62,12 +63,19 @@
                 </div>
             </div>
 
+            <div class="row">
+                <p>Leave any field empty to use their default values.</p>
+            </div>
+
             <form id="editForm">
                 <div class="row">
                     <div class="col-12">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="token" minlength="1" maxlength="64" />
-                            <label for="token">Registration token</label>
+                            <label for="token">Registration token. Default: random.</label>
+                            <div class="form-text" id="allowedCharacters" hidden>
+                                Allowed characters: <code>A-Z a-z 0-9 . _ ~ -</code>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,26 +83,31 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="uses_allowed" min="1" />
-                            <label for="uses_allowed">Uses allowed</label>
+                            <input type="number" class="form-control" id="uses_allowed" min="0" />
+                            <label for="uses_allowed">Uses allowed. Default: 10</label>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="expiry_time" min="1" />
-                            <label for="expiry_time">Expiration time</label>
+                            <input type="date" class="form-control" id="expiry_time" />
+                            <label for="expiry_time">Expiration time. Default: in two weeks</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row mb-3 mb-md-0">
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="length" min="1" max="64" />
-                            <label for="length">Token length</label>
+                            <input type="number" class="form-control" id="length" min="5" max="64" />
+                            <label for="length">Token length. Default: 16</label>
                         </div>
                     </div>
+                    <div class="col-12 col-md-6 text-end align-self-center">
+                        <button class="btn btn-outline-success" type="submit" id="saveToken">Create</button>
+                    </div>
                 </div>
+
+                <div class="row"></div>
             </form>
 
             <div class="row">
@@ -104,7 +117,7 @@
             </div>
         </div>
 
-        <script src="./bootstrap.bundle.min.js"></script>
+        <script src="./bootstrap/bootstrap.bundle.min.js"></script>
         <script src="./script.js"></script>
     </body>
 </html>
