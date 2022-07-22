@@ -419,15 +419,23 @@ loginForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ initial_device_display_name: 'dummy' }),
         });
 
+        const result = await res.json();
+
+        if (res.status === 403) {
+            return alert(
+                `${result.error}. You cannot manage registration tokens on a server with registration disabled`,
+            );
+        }
+
         if (res.status !== 401) {
             return alert(`Unable to connect to Synapse on ${serverDomain}`);
         }
 
-        const result = await res.json();
+        console.log(result);
         let tokenDisabled = true;
-        result.flows.forEach((flow) => {
+        result.flows.forEach(function (flow) {
             if (flow.stages.includes('m.login.registration_token')) {
-                tokenEnabled = true;
+                tokenDisabled = false;
             }
         });
 
