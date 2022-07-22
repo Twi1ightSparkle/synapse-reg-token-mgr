@@ -5,6 +5,7 @@ const loginBtn = document.querySelector('#loginBtn');
 
 const editForm = document.querySelector('#editForm');
 const tokenInput = document.querySelector('#token');
+const allowedCharacters = document.querySelector('#allowedCharacters');
 const usesAllowedInput = document.querySelector('#uses_allowed');
 const expiryTimeInput = document.querySelector('#expiry_time');
 const lengthInput = document.querySelector('#length');
@@ -172,7 +173,7 @@ function fromUnixTime(timestamp) {
 
 /**
  * Fetch credentials from localStorage
- * @returns {Object} Object containing accessToken, serverDomain, and headers (for fetch)
+ * @returns {Object} Object containing serverDomain, and headers (for fetch)
  */
 function getCredentials() {
     const token = localStorage.getItem('accessToken');
@@ -180,7 +181,6 @@ function getCredentials() {
 
     headers.append('Authorization', `Bearer ${token}`);
     return {
-        accessToken,
         serverDomain: localStorage.getItem('serverDomain'),
         headers,
     };
@@ -249,7 +249,7 @@ function inTwoWeeks() {
 function validateToken() {
     const token = tokenInput.value;
 
-    if (!/^[A-Za-z0-9\._~-]+$/.test(token) && token.length > 0) {
+    if (!/^[A-Za-z0-9._~-]+$/.test(token) && token.length > 0) {
         tokenInput.classList.add('is-invalid');
         allowedCharacters.hidden = false;
         return false;
@@ -324,7 +324,7 @@ editForm.addEventListener('submit', async (e) => {
 /**
  * Run some checks when focusing away from the token input
  */
-tokenInput.addEventListener('focusout', (event) => {
+tokenInput.addEventListener('focusout', () => {
     validateToken();
     const token = tokenInput.value;
     lengthInput.disabled = token.length > 0 ? true : false;
