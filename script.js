@@ -408,46 +408,6 @@ loginForm.addEventListener('submit', async (e) => {
         return alert(`User ${mxid} is not admin on ${serverDomain}. ${err}`);
     }
 
-    // Check if the server has registration tokens enabled
-    try {
-        const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-
-        const res = await fetch(`https://${serverDomain}/_matrix/client/r0/register`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ initial_device_display_name: 'dummy' }),
-        });
-
-        const result = await res.json();
-
-        if (res.status === 403) {
-            return alert(
-                `${result.error}. You cannot manage registration tokens on a server with registration disabled`,
-            );
-        }
-
-        if (res.status !== 401) {
-            return alert(`Unable to connect to Synapse on ${serverDomain}`);
-        }
-
-        console.log(result);
-        let tokenDisabled = true;
-        result.flows.forEach(function (flow) {
-            if (flow.stages.includes('m.login.registration_token')) {
-                tokenDisabled = false;
-            }
-        });
-
-        if (tokenDisabled) {
-            alert(
-                `Registration tokens are disabled for ${serverDomain}. You can still manage registration tokens, but they will not be required on sign-up.`,
-            );
-        }
-    } catch (err) {
-        return alert(`Unable to connect to Synapse on ${serverDomain}. ${err}`);
-    }
-
     localStorage.setItem('serverDomain', serverDomain);
     localStorage.setItem('accessToken', accessToken);
     changeLoginBtn(false);
