@@ -1,6 +1,6 @@
 const loginForm = document.querySelector('#loginForm');
-const accessTokenInput = document.querySelector('#accessToken');
 const serverDomainInput = document.querySelector('#serverDomain');
+const accessTokenInput = document.querySelector('#accessToken');
 const loginBtn = document.querySelector('#loginBtn');
 
 const editForm = document.querySelector('#editForm');
