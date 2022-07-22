@@ -1,6 +1,6 @@
 const loginForm = document.querySelector('#loginForm');
-const accessTokenInput = document.querySelector('#accessToken');
 const serverDomainInput = document.querySelector('#serverDomain');
+const accessTokenInput = document.querySelector('#accessToken');
 const loginBtn = document.querySelector('#loginBtn');
 
 const editForm = document.querySelector('#editForm');
@@ -11,12 +11,6 @@ const lengthInput = document.querySelector('#length');
 const saveTokenBtn = document.querySelector('#saveToken');
 
 const tokenTableDiv = document.querySelector('#tokenTableDiv');
-
-/**
- * Checks if an access token is stored in localStorage
- * @returns {Boolean} True if one if found (if logged in)
- */
-const isLoggedIn = () => (localStorage.getItem('accessToken') ? true : false);
 
 /**
  * Changes the text and color of the login button
@@ -37,46 +31,15 @@ function changeLoginBtn(login) {
 }
 
 /**
- * Get the unix time stamp in two weeks form now
- * @returns {Number} Unix time stamp
- */
-function inTwoWeeks() {
-    let inTwoWeeks = new Date().getTime();
-    inTwoWeeks += 14 * 24 * 60 * 60 * 1000 - 1;
-    return inTwoWeeks;
-}
-/**
- * Fetch credentials from localStorage
- * @returns {Object} Object containing accessToken, serverDomain, and headers (for fetch)
- */
-function getCredentials() {
-    const token = localStorage.getItem('accessToken');
-    const headers = new Headers();
-
-    headers.append('Authorization', `Bearer ${token}`);
-    return {
-        accessToken,
-        serverDomain: localStorage.getItem('serverDomain'),
-        headers,
-    };
-}
-
-/**
- * Convert a unix time stamp into human readable date
- * @param {Number} timestamp UNIX time stamp in milliseconds since epoch
- * @returns {String}         String formatted in format Jan 18, 2022
- */
-function fromUnixTime(timestamp) {
-    return new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-    }).format(timestamp);
-}
-
-/**
  * Reset the token input form
  */
 function clearForm() {
+    // Get tomorrows date in format yyyy-mm-dd
+    const today = new Date();
+    let tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow = tomorrow.toISOString().split('T')[0];
+
     tokenInput.disabled = false;
     tokenInput.value = '';
 
@@ -84,6 +47,7 @@ function clearForm() {
     usesAllowedInput.value = '';
 
     expiryTimeInput.disabled = false;
+    expiryTimeInput.min = tomorrow;
     expiryTimeInput.value = '';
 
     lengthInput.disabled = false;
@@ -129,6 +93,100 @@ function createTr(token) {
 }
 
 /**
+ * Deletes a registration token
+ * @param {String} token The token to delete
+ */
+async function deleteToken(token) {
+    if (!confirm(`Delete registration token: ${token}`)) {
+        return;
+    }
+
+    const { serverDomain, headers } = getCredentials();
+
+    try {
+        const res = await fetch(`https://${serverDomain}/_synapse/admin/v1/registration_tokens/${token}`, {
+            method: 'DELETE',
+            headers,
+        });
+
+        const result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable delete token. ${result.error}`);
+        }
+    } catch (err) {
+        return alert('Unable delete token');
+    }
+
+    document.getElementById(`token-${token}`).remove();
+}
+
+/**
+ * Fetch a token and add it's editable details to the form
+ * @param {String} token The token to load
+ */
+async function editToken(token) {
+    const { serverDomain, headers } = getCredentials();
+
+    let result;
+    try {
+        const res = await fetch(`https://${serverDomain}/_synapse/admin/v1/registration_tokens/${token}`, {
+            method: 'GET',
+            headers,
+        });
+
+        result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable fetch token. ${result.error}`);
+        }
+    } catch (err) {
+        return alert('Unable fetch token');
+    }
+
+    usesAllowedInput.value = result.uses_allowed;
+    usesAllowedInput.min = result.pending + result.completed || 1;
+
+    expiryTimeInput.valueAsNumber = result.expiry_time || '';
+
+    lengthInput.value = result.token.length;
+    lengthInput.disabled = true;
+
+    tokenInput.disabled = true;
+    tokenInput.value = result.token;
+
+    saveTokenBtn.textContent = 'Update';
+}
+
+/**
+ * Convert a unix time stamp into human readable date
+ * @param {Number} timestamp UNIX time stamp in milliseconds since epoch
+ * @returns {String}         String formatted in format Jan 18, 2022
+ */
+function fromUnixTime(timestamp) {
+    return new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+    }).format(timestamp);
+}
+
+/**
+ * Fetch credentials from localStorage
+ * @returns {Object} Object containing accessToken, serverDomain, and headers (for fetch)
+ */
+function getCredentials() {
+    const token = localStorage.getItem('accessToken');
+    const headers = new Headers();
+
+    headers.append('Authorization', `Bearer ${token}`);
+    return {
+        accessToken,
+        serverDomain: localStorage.getItem('serverDomain'),
+        headers,
+    };
+}
+
+/**
  * Get all registration tokens from Synapse and create the table
  * @returns Nothing
  */
@@ -142,11 +200,11 @@ async function getTokens() {
             headers,
         });
 
-        if (res.status !== 200) {
-            return alert(`Unable get list access tokens`);
-        }
-
         result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable get list access tokens. ${result.error}`);
+        }
     } catch (err) {
         return alert(`Unable get list access tokens: ${err}`);
     }
@@ -168,84 +226,37 @@ async function getTokens() {
 }
 
 /**
- * Fetch a token and add it's editable details to the form
- * @param {String} token The token to load
+ * Checks if an access token is stored in localStorage
+ * @returns {Boolean} True if one if found (if logged in)
  */
-async function editToken(token) {
-    const { serverDomain, headers } = getCredentials();
+const isLoggedIn = () => (localStorage.getItem('accessToken') ? true : false);
 
-    let result;
-    try {
-        const res = await fetch(`https://${serverDomain}/_synapse/admin/v1/registration_tokens/${token}`, {
-            method: 'GET',
-            headers,
-        });
-
-        if (res.status !== 200) {
-            return alert('Unable fetch token');
-        }
-
-        result = await res.json();
-    } catch (err) {
-        return alert('Unable fetch token');
-    }
-
-    usesAllowedInput.value = result.uses_allowed;
-    usesAllowedInput.min = result.pending + result.completed || 1;
-
-    expiryTimeInput.valueAsNumber = result.expiry_time || '';
-
-    lengthInput.value = result.token.length;
-    lengthInput.disabled = true;
-
-    tokenInput.disabled = true;
-    tokenInput.value = result.token;
-
-    saveTokenBtn.textContent = 'Update';
+/**
+ * Get the unix time stamp in two weeks form now
+ * @returns {Number} Unix time stamp
+ */
+function inTwoWeeks() {
+    let inTwoWeeks = new Date().getTime();
+    inTwoWeeks += 14 * 24 * 60 * 60 * 1000 - 1;
+    return inTwoWeeks;
 }
 
 /**
  * Validate the token and add a red ring around the input if invalid.
  * Also disables the token length input if a token is specified
+ * @returns {Boolean} True if valid
  */
-tokenInput.addEventListener('focusout', (event) => {
-    console.log('sdggfsd');
+function validateToken() {
     const token = tokenInput.value;
-    if (!/[A-Za-z0-9\._~-]+/.test(token) && token.length > 0) {
+
+    if (!/^[A-Za-z0-9\._~-]+$/.test(token) && token.length > 0) {
         tokenInput.classList.add('is-invalid');
         allowedCharacters.hidden = false;
+        return false;
     } else {
         tokenInput.classList.remove('is-invalid');
+        return true;
     }
-
-    lengthInput.disabled = token.length > 0 ? true : false;
-});
-
-/**
- * Deletes a registration token
- * @param {String} token The token to delete
- */
-async function deleteToken(token) {
-    if (!confirm(`Delete registration token: ${token}`)) {
-        return;
-    }
-
-    const { serverDomain, headers } = getCredentials();
-
-    try {
-        const res = await fetch(`https://${serverDomain}/_synapse/admin/v1/registration_tokens/${token}`, {
-            method: 'DELETE',
-            headers,
-        });
-
-        if (res.status !== 200) {
-            return alert('Unable delete token');
-        }
-    } catch (err) {
-        return alert('Unable delete token');
-    }
-
-    document.getElementById(`token-${token}`).remove();
 }
 
 /**
@@ -253,6 +264,10 @@ async function deleteToken(token) {
  */
 editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!validateToken()) {
+        return;
+    }
 
     const editing = tokenInput.disabled;
 
@@ -289,11 +304,11 @@ editForm.addEventListener('submit', async (e) => {
             body: JSON.stringify(body),
         });
 
-        if (res.status !== 200) {
-            return alert('Unable create token');
-        }
-
         result = await res.json();
+
+        if (res.status !== 200) {
+            return alert(`Unable create token. ${result.error}`);
+        }
     } catch (err) {
         return alert('Unable create token');
     }
@@ -307,17 +322,13 @@ editForm.addEventListener('submit', async (e) => {
 });
 
 /**
- * If an access token and domain is stored, populate the login form and change the login button
+ * Run some checks when focusing away from the token input
  */
-window.onload = function () {
-    if (isLoggedIn()) {
-        document.querySelector('#accessToken').value = localStorage.getItem('accessToken');
-        document.querySelector('#serverDomain').value = localStorage.getItem('serverDomain');
-        changeLoginBtn(false);
-        getTokens();
-    }
-    clearForm();
-};
+tokenInput.addEventListener('focusout', (event) => {
+    validateToken();
+    const token = tokenInput.value;
+    lengthInput.disabled = token.length > 0 ? true : false;
+});
 
 /**
  * Runs when the login form is submitted
@@ -402,3 +413,16 @@ loginForm.addEventListener('submit', async (e) => {
     changeLoginBtn(false);
     getTokens();
 });
+
+/**
+ * If an access token and domain is stored, populate the login form and change the login button
+ */
+window.onload = function () {
+    if (isLoggedIn()) {
+        document.querySelector('#accessToken').value = localStorage.getItem('accessToken');
+        document.querySelector('#serverDomain').value = localStorage.getItem('serverDomain');
+        changeLoginBtn(false);
+        getTokens();
+    }
+    clearForm();
+};
