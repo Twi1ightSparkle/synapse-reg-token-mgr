@@ -242,10 +242,32 @@ function inTwoWeeks() {
 }
 
 /**
+ * Validate the token and add a red ring around the input if invalid.
+ * Also disables the token length input if a token is specified
+ * @returns {Boolean} True if valid
+ */
+function validateToken() {
+    const token = tokenInput.value;
+
+    if (!/^[A-Za-z0-9\._~-]+$/.test(token) && token.length > 0) {
+        tokenInput.classList.add('is-invalid');
+        allowedCharacters.hidden = false;
+        return false;
+    } else {
+        tokenInput.classList.remove('is-invalid');
+        return true;
+    }
+}
+
+/**
  * Runs when the token form is submitted
  */
 editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!validateToken()) {
+        return;
+    }
 
     const editing = tokenInput.disabled;
 
@@ -300,19 +322,11 @@ editForm.addEventListener('submit', async (e) => {
 });
 
 /**
- * Validate the token and add a red ring around the input if invalid.
- * Also disables the token length input if a token is specified
+ * Run some checks when focusing away from the token input
  */
 tokenInput.addEventListener('focusout', (event) => {
-    console.log('sdggfsd');
+    validateToken();
     const token = tokenInput.value;
-    if (!/^[A-Za-z0-9\._~-]+$/.test(token) && token.length > 0) {
-        tokenInput.classList.add('is-invalid');
-        allowedCharacters.hidden = false;
-    } else {
-        tokenInput.classList.remove('is-invalid');
-    }
-
     lengthInput.disabled = token.length > 0 ? true : false;
 });
 
