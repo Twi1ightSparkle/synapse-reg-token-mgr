@@ -41,6 +41,7 @@ function clearForm() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow = tomorrow.toISOString().split('T')[0];
 
+    tokenInput.classList.remove('is-invalid');
     tokenInput.disabled = false;
     tokenInput.value = '';
 
@@ -249,7 +250,8 @@ function inTwoWeeks() {
 function validateToken() {
     const token = tokenInput.value;
 
-    if (!/^[A-Za-z0-9._~-]+$/.test(token) && token.length > 0) {
+    // if token has characters outside the allowed set or token consist of only periods
+    if (!/^[A-Za-z0-9._~-]+$/.test(token) || /^\.+$/.test(token)) {
         tokenInput.classList.add('is-invalid');
         allowedCharacters.hidden = false;
         return false;
