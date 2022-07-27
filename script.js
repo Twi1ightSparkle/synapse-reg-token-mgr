@@ -251,7 +251,7 @@ function validateToken() {
     const token = tokenInput.value;
 
     // if token has characters outside the allowed set or token consist of only periods
-    if (!/^[A-Za-z0-9._~-]+$/.test(token) || /^\.+$/.test(token)) {
+    if (token.length > 0 && (!/^[A-Za-z0-9._~-]+$/.test(token) || /^\.+$/.test(token))) {
         tokenInput.classList.add('is-invalid');
         allowedCharacters.hidden = false;
         return false;
