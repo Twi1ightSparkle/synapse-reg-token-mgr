@@ -183,5 +183,26 @@
 
         <script src="./bootstrap/bootstrap.bundle.min.js"></script>
         <script src="./script.js"></script>
+
+        <!-- Analytics -->
+        <script src="https://twilightsparkle.dev/privacy/privacy.js"></script>
+        <script>
+            var _paq = (window._paq = window._paq || []);
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                _paq.push([
+                    'setTrackerUrl',
+                    'https://analytics.twilightsparkle.dev/matomo.php',
+                ]);
+                _paq.push(['setSiteId', '6']);
+            })();
+        </script>
+        <script
+            async
+            defer
+            src="https://analytics.twilightsparkle.dev/matomo.js"
+        ></script>
+        <!-- Analytics -->
     </body>
 </html>

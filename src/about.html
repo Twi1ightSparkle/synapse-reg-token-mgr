@@ -103,6 +103,15 @@
                             >GitHub</a
                         >.
                     </p>
+                    <p>
+                        See my privacy policy
+                        <a
+                            href="https://twilightsparkle.dev/privacy/policy.html"
+                            >here</a
+                        >.
+                    </p>
+                    <div id="matomo-opt-out"></div>
+                    <br />
                 </div>
             </div>
 
@@ -223,5 +232,27 @@
                     window.location.host;
             };
         </script>
+
+        <!-- Analytics -->
+        <script src="https://twilightsparkle.dev/privacy/privacy.js"></script>
+        <script src="https://twilightsparkle.dev/privacy/opt-out.js"></script>
+        <script>
+            var _paq = (window._paq = window._paq || []);
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                _paq.push([
+                    'setTrackerUrl',
+                    'https://analytics.twilightsparkle.dev/matomo.php',
+                ]);
+                _paq.push(['setSiteId', '6']);
+            })();
+        </script>
+        <script
+            async
+            defer
+            src="https://analytics.twilightsparkle.dev/matomo.js"
+        ></script>
+        <!-- Analytics -->
     </body>
 </html>
