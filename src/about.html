@@ -26,13 +26,23 @@
                 >
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarSupportedContent"
+                >
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="index.html">Home</a>
+                            <a
+                                class="nav-link"
+                                aria-current="page"
+                                href="index.html"
+                                >Home</a
+                            >
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="about.html">About</a>
+                            <a class="nav-link active" href="about.html"
+                                >About</a
+                            >
                         </li>
                     </ul>
                 </div>
@@ -48,7 +58,8 @@
             <div class="row">
                 <div class="col">
                     <p>
-                        The page is hosted with GitHub Pages. You can read their Privacy Policy
+                        The page is hosted with GitHub Pages. You can read their
+                        Privacy Policy
                         <a
                             href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement"
                             target="_blank"
@@ -57,16 +68,22 @@
                         >.
                     </p>
                     <p>
-                        Your server domain and the access token are stored in your browser's local storage. No data is
-                        ever sent to the server at <code><span id="current-url"></span></code>.
+                        Your server domain and the access token are stored in
+                        your browser's local storage. No data is ever sent to
+                        the server at
+                        <code><span id="current-url"></span></code>.
                     </p>
                     <p>
-                        Get your access token from Element settings <i class="fa-solid fa-arrow-right"></i> Help & About
-                        <i class="fa-solid fa-arrow-right"></i> Access Token. Your account must be an admin in Synapse.
+                        Get your access token from Element settings
+                        <i class="fa-solid fa-arrow-right"></i> Help & About
+                        <i class="fa-solid fa-arrow-right"></i> Access Token.
+                        Your account must be an admin in Synapse.
                     </p>
                     <p>
-                        To use registration tokens, you must enable the feature in Synapse by setting the
-                        <code>registration_requires_token: true</code> config option.
+                        To use registration tokens, you must enable the feature
+                        in Synapse by setting the
+                        <code>registration_requires_token: true</code> config
+                        option.
                     </p>
                     <p>
                         The Synapse documentation for registration tokens is
@@ -93,22 +110,34 @@
                 <div class="col">
                     <h4>Registration token objects</h4>
                     <ul>
-                        <li><b>Token:</b> The token which can be used to authenticate registration.</li>
                         <li>
-                            <b>Uses allowed:</b> The number of times the token can be used to complete a registration
-                            before it becomes invalid.
+                            <b>Token:</b> The token which can be used to
+                            authenticate registration.
                         </li>
                         <li>
-                            <b>Pending uses:</b> The number of pending uses the token has. When someone uses the token
-                            to authenticate themselves, the pending counter is incremented so that the token is not used
-                            more than the permitted number of times. When the person completes registration, the pending
-                            counter is decremented, and the successful counter is incremented.
+                            <b>Uses allowed:</b> The number of times the token
+                            can be used to complete a registration before it
+                            becomes invalid.
                         </li>
                         <li>
-                            <b>Successful registrations:</b> The number of times the token has been used to complete the
-                            registration successfully.
+                            <b>Pending uses:</b> The number of pending uses the
+                            token has. When someone uses the token to
+                            authenticate themselves, the pending counter is
+                            incremented so that the token is not used more than
+                            the permitted number of times. When the person
+                            completes registration, the pending counter is
+                            decremented, and the successful counter is
+                            incremented.
                         </li>
-                        <li><b>Expiration time:</b> The latest time the token is valid.</li>
+                        <li>
+                            <b>Successful registrations:</b> The number of times
+                            the token has been used to complete the registration
+                            successfully.
+                        </li>
+                        <li>
+                            <b>Expiration time:</b> The latest time the token is
+                            valid.
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -117,20 +146,25 @@
                 <div class="col">
                     <h4>License</h4>
                     <p>
-                        Simple web app for managing Synapse registration tokens.<br />
+                        Simple web app for managing Synapse registration
+                        tokens.<br />
                         Copyright (C) 2023 Twilight Sparkle
                         <br /><br />
-                        This program is free software: you can redistribute it and/or modify it under
-                        the terms of the GNU Affero General Public License as published by the Free
-                        Software Foundation, either version 3 of the License, or (at your option) any
-                        later version.
+                        This program is free software: you can redistribute it
+                        and/or modify it under the terms of the GNU Affero
+                        General Public License as published by the Free Software
+                        Foundation, either version 3 of the License, or (at your
+                        option) any later version.
                         <br /><br />
-                        This program is distributed in the hope that it will be useful, but WITHOUT ANY
-                        WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-                        PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+                        This program is distributed in the hope that it will be
+                        useful, but WITHOUT ANY WARRANTY; without even the
+                        implied warranty of MERCHANTABILITY or FITNESS FOR A
+                        PARTICULAR PURPOSE. See the GNU Affero General Public
+                        License for more details.
                         <br /><br />
-                        You should have received a copy of the GNU Affero General Public License along
-                        with this program. If not, see
+                        You should have received a copy of the GNU Affero
+                        General Public License along with this program. If not,
+                        see
                         <a
                             href="https://www.gnu.org/licenses/"
                             target="_blank"
@@ -147,7 +181,10 @@
                     <ul>
                         <li>
                             Icons by
-                            <a href="https://fontawesome.com/" target="_blank" rel="noopener noreferrer"
+                            <a
+                                href="https://fontawesome.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 >Font Awesome</a
                             >
                             used under the terms of
@@ -160,7 +197,12 @@
                         </li>
                         <li>
                             Theme by
-                            <a href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">Bootstrap</a>
+                            <a
+                                href="https://getbootstrap.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >Bootstrap</a
+                            >
                             used under the terms of
                             <a
                                 href="https://github.com/twbs/bootstrap/blob/main/LICENSE"
@@ -177,7 +219,8 @@
         <script src="./bootstrap/bootstrap.bundle.min.js"></script>
         <script type="text/javascript">
             window.onload = function () {
-                document.querySelector('#current-url').textContent = window.location.host;
+                document.querySelector('#current-url').textContent =
+                    window.location.host;
             };
         </script>
     </body>
