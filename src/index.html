@@ -26,10 +26,18 @@
                 >
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarSupportedContent"
+                >
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                            <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="index.html"
+                                >Home</a
+                            >
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="about.html">About</a>
@@ -52,7 +60,13 @@
                             id="accessToken"
                             required
                         />
-                        <button class="btn btn-outline-success" type="submit" id="loginBtn">Login</button>
+                        <button
+                            class="btn btn-outline-success"
+                            type="submit"
+                            id="loginBtn"
+                        >
+                            Login
+                        </button>
                     </form>
                 </div>
             </div>
@@ -72,11 +86,25 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="token" minlength="6" maxlength="64" />
-                            <label for="token">Registration token. Default: random</label>
-                            <div class="form-text" id="allowedCharacters" hidden>
-                                The token must be at least 6 characters long and cannot consist of only periods.<br />
-                                Allowed characters: <code>A-Z a-z 0-9 . _ ~ -</code>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="token"
+                                minlength="6"
+                                maxlength="64"
+                            />
+                            <label for="token"
+                                >Registration token. Default: random</label
+                            >
+                            <div
+                                class="form-text"
+                                id="allowedCharacters"
+                                hidden
+                            >
+                                The token must be at least 6 characters long and
+                                cannot consist of only periods.<br />
+                                Allowed characters:
+                                <code>A-Z a-z 0-9 . _ ~ -</code>
                             </div>
                         </div>
                     </div>
@@ -85,14 +113,27 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="uses_allowed" min="1" />
-                            <label for="uses_allowed">Uses allowed. Default: 10</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="uses_allowed"
+                                min="1"
+                            />
+                            <label for="uses_allowed"
+                                >Uses allowed. Default: 10</label
+                            >
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="expiry_time" />
-                            <label for="expiry_time">Expiration time. Default: in two weeks</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="expiry_time"
+                            />
+                            <label for="expiry_time"
+                                >Expiration time. Default: in two weeks</label
+                            >
                         </div>
                     </div>
                 </div>
@@ -100,13 +141,33 @@
                 <div class="row mb-3 mb-md-0">
                     <div class="col-12 col-md-6">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="length" min="6" max="64" />
-                            <label for="length">Token length. Default: 16</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="length"
+                                min="6"
+                                max="64"
+                            />
+                            <label for="length"
+                                >Token length. Default: 16</label
+                            >
                         </div>
                     </div>
                     <div class="col-12 col-md-6 text-end align-self-center">
-                        <button class="btn btn-outline-warning" type="button" onclick="clearForm()">Reset form</button>
-                        <button class="btn btn-outline-success" type="submit" id="saveToken">Create</button>
+                        <button
+                            class="btn btn-outline-warning"
+                            type="button"
+                            onclick="clearForm()"
+                        >
+                            Reset form
+                        </button>
+                        <button
+                            class="btn btn-outline-success"
+                            type="submit"
+                            id="saveToken"
+                        >
+                            Create
+                        </button>
                     </div>
                 </div>
 
